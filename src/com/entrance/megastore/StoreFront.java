@@ -50,27 +50,37 @@ public class StoreFront extends HttpServlet {
 			out.println("<html>"); 
 			out.println("<head>"); 
 			out.println("<title>Cycling</title>");
-            out.println("<style>table{border:1px solid black;}</style>"); 
+            out.println("<style></style>"); 
             out.println("</head>");  
             out.println("<body>");
             out.println("<form>");
-            out.println("<table>");
+            out.println("<table style=\"border:1px solid black\" width=\"100%\">");
             out.println("<tr>");
-            out.println("<th>");
-            out.println("Matt's World of Cycling");
-            out.println("</th>");
             out.println("<td>");
-            out.println("<select>");
+            out.println("<table style=\"background-color:#F0F0F0\" width=\"100%\">");
+            out.println("<tr>");
+            out.println("<td width=\"70%\">");
+            out.println("<h1>Matt's World of Cycling</h1>");
+            out.println("</td>");
+            out.println("<td width=\"20%\">");
+            out.println("<table width=\"100%\"><tr><td>My Favorite Racing is</td></tr><tr><td><select>");
+            
             for(String s : cyclingMap.keySet()) {
             	out.println("<option value=\"" + s + "\">" + cyclingMap.get(s) + "</option>");
             }
-            out.println("</select>");
+            out.println("</select></td></tr></table>");
             out.println("</td>");
-            out.println("<td>");
+            out.println("<td width=\"10%\">");
             out.println("<input type=\"submit\" value=\"Submit\"></input>");
             out.println("</td>");
             out.println("</th>");
             out.println("</table>");
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("</table>");
+            
+            
+            
             out.println("</form>");
             out.println("</body>");
             out.println("</html>"); 
