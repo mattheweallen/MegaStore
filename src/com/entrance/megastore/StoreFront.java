@@ -45,24 +45,32 @@ public class StoreFront extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
+		String background1 = "radB1";
+		String background2 = "radB2";
 		
 		try {
+			out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
 			out.println("<html>"); 
 			out.println("<head>"); 
 			out.println("<title>Cycling</title>");
-            out.println("<style></style>"); 
+            out.println("<style type=\"text/css\">");
+            out.println(".radB1{background-color:#F0F0F0;}");
+            out.println(".radB2{background-color:#d0e4fe;}");
+            out.println(".gnarlyB1{background-color:#66FFFF;}");
+            out.println(".gnarlyB2{background-color:#66FF00;}");
+            out.println("</style>");
             out.println("</head>");  
             out.println("<body>");
-            out.println("<form>");
+            out.println("<form action=\"entrance\">");
             out.println("<table style=\"border:1px solid black\" width=\"100%\">");
             out.println("<tr>");
             out.println("<td>");
-            out.println("<table style=\"background-color:#F0F0F0\" width=\"100%\">");
+            out.println("<table class=\"" + background1 + "\" width=\"100%\">");
             out.println("<tr>");
-            out.println("<td width=\"70%\">");
+            out.println("<td style=\"width:70%\">");
             out.println("<h1>Matt's World of Cycling</h1>");
             out.println("</td>");
-            out.println("<td width=\"20%\">");
+            out.println("<td style=\"width:20%\">");
             out.println("<table width=\"100%\"><tr><td>My Favorite Racing is</td></tr><tr><td><select>");
             
             for(String s : cyclingMap.keySet()) {
@@ -70,13 +78,37 @@ public class StoreFront extends HttpServlet {
             }
             out.println("</select></td></tr></table>");
             out.println("</td>");
-            out.println("<td width=\"10%\">");
-            out.println("<input type=\"submit\" value=\"Submit\"></input>");
+            out.println("<td style=\"width:10%\">");
+            out.println("<input type=\"submit\" value=\"Submit\">");
             out.println("</td>");
-            out.println("</th>");
+            out.println("</tr>");
             out.println("</table>");
             out.println("</td>");
             out.println("</tr>");
+            out.println("<tr>");
+            out.println("<td>");
+            out.println("<table class=\"" + background2 + "\" width=\"100%\">");
+            out.println("<tr>");
+            out.println("<td>");
+            out.println("<p>");
+            out.println("Cycling has many discplines. ");
+            out.println("A few of the disciplines are cyclocross, mountain, bicycle motocross, road, and track. ");
+            out.println("They are all related in that they are all done on a bicycle, but the bicycle as well as the strategy, and skills often differ. ");
+            out.println("Cyclocross is raced in the fall and winter in some of the worst conditions. ");
+            out.println("It is a half hour to an hour of delicious pain. ");
+            out.println("The courses are usually a mix of surfaces: pavement, sand, grass, and dirt. ");
+            out.println("Like mountain biking and bicycle motocross, the holeshot is important, and often determines who controls the race. ");
+            out.println("The courses in mountain bike, bmx, and cyclocross races are often hard to pass on, so getting out front right away is crucial. ");
+            out.println("Road cycling and track this is less important. Especially in road racing where the speeds are high enough that drafting is crucial to victory. ");
+            out.println("Where as cyclocross, bmx, and mountain bike racing victory is often set up early in the race, track and road team tactics and racing strategy throughtout out the race are important to winning. ");
+            out.println("That in a nut shell are some of the different disciplines in cycling. ");
+            out.println("</p>");
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("</table>");
+            out.println("</td>");
+            out.println("</tr>");
+            
             out.println("</table>");
             
             
