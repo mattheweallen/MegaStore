@@ -31,7 +31,12 @@ public class StoreFront extends HttpServlet {
         aMap.put("track", "Track");
         cyclingMap = Collections.unmodifiableMap(aMap);
     }
-       
+    
+    final static String background1 = "radB1";
+    final static String background2 = "radB2";
+	
+	final static String defaultImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
+	final static String cyclocrossImage = "http://upload.wikimedia.org/wikipedia/en/thumb/7/72/Cyclocross_runup.JPG/700px-Cyclocross_runup.JPG";   
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -46,13 +51,10 @@ public class StoreFront extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
-		String background1 = "radB1";
-		String background2 = "radB2";
 		
-		final String defaultImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
 		
 		HttpSession session = request.getSession(true);
-		//boolean isSessionNew = session.isNew();
+		boolean isSessionNew = session.isNew();
 		String sessionId = session.getId();
 		//String cookieFromRequestHeader = request.getHeader("cookie");
 		
@@ -131,17 +133,17 @@ public class StoreFront extends HttpServlet {
             out.println("<td>");
             out.println("<ul>");
             out.println("<li  style=\"list-style:none;\">");
-            out.println("<input type=\"radio\" name=\"custom_type\" value=\"public\" />");
+            out.println("<input type=\"radio\" name=\"theme\" value=\"radB1\" />");
             out.println("Jens");
-            out.println("<input type=\"radio\" name=\"custom_type\""); 
-            out.println("value=\"private\" id=\"custom_venuetype_private\" />");
+            out.println("<input type=\"radio\" name=\"theme\""); 
+            out.println("value=\"radB2\"/>");
             out.println("Fabian");
             out.println("</li>");
             out.println("</ul>");
             out.println("</td>");
             
             out.println("<td>");
-            out.println("<input type=\"submit\" value=\"Submit\">");
+            out.println("<input type=\"submit\" value=\"update\">");
             out.println("</td>");
             out.println("</tr>");
             out.println("</table>");
@@ -149,9 +151,16 @@ public class StoreFront extends HttpServlet {
             out.println("</td>");
             out.println("</tr>");
             out.println("<tr align=\"left\">");
-            out.println("<td>");
-            out.println("<img src=\"" + defaultImage + "\" alt=\"Leon Georget\" width=\"10%\" height=\"10%\">");
-            out.println("</td>");
+            
+            if(isSessionNew) {
+	            out.println("<td>");
+	            out.println("<img src=\"" + defaultImage + "\" alt=\"Leon Georget\" width=\"10%\" height=\"10%\">");
+	            out.println("</td>");
+            } else {
+            	out.println("<td>");
+	            out.println("<img src=\"" + cyclocrossImage + "\" alt=\"Cyclocross Run Up\" width=\"10%\" height=\"10%\">");
+	            out.println("</td>");
+            }
             
             
             
