@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,6 +58,12 @@ public class StoreFront extends HttpServlet {
 		boolean isSessionNew = session.isNew();
 		String sessionId = session.getId();
 		//String cookieFromRequestHeader = request.getHeader("cookie");
+		Cookie c1 = new Cookie("favorite", "cx");
+		response.addCookie(c1);
+		
+		for(int i = 0; i < request.getCookies().length; i++) {
+			System.out.println("Cookie" + i + request.getCookies()[i] + " " + request.getCookies()[i].getName() + " " + request.getCookies()[i].getValue());
+		}
 		
 		
 		try {
@@ -178,7 +185,7 @@ public class StoreFront extends HttpServlet {
 		} finally {
 			out.close();
 		}
-		System.out.println("Matthew I am in the get" + request.getParameter("race_type_select"));
+		System.out.println("Matthew I am in the get" + request.getParameter("race_type_select") + " " + request.getParameter("theme"));
 	}
 
 	/**
