@@ -11,6 +11,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 //TODO properly indent code, refer to email from Dr Hunt.
 
@@ -48,6 +49,14 @@ public class StoreFront extends HttpServlet {
 		String background1 = "radB1";
 		String background2 = "radB2";
 		
+		final String defaultImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
+		
+		HttpSession session = request.getSession(true);
+		//boolean isSessionNew = session.isNew();
+		String sessionId = session.getId();
+		//String cookieFromRequestHeader = request.getHeader("cookie");
+		
+		
 		try {
 			out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
 			out.println("<html>"); 
@@ -58,6 +67,7 @@ public class StoreFront extends HttpServlet {
             out.println(".radB2{background-color:#d0e4fe;}");
             out.println(".gnarlyB1{background-color:#66FFFF;}");
             out.println(".gnarlyB2{background-color:#66FF00;}");
+            //out.println(".li {display:inline}");
             out.println("</style>");
             out.println("</head>");  
             out.println("<body>");
@@ -107,6 +117,44 @@ public class StoreFront extends HttpServlet {
             out.println("</tr>");
             out.println("</table>");
             out.println("</td>");
+            out.println("</tr>");
+            out.println("<tr align=\"right\">");
+            out.println("<td>");
+            out.println(sessionId);
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("<tr align=\"right\">");
+            out.println("<td>");
+            
+            out.println("<table>");
+            out.println("<tr>");
+            out.println("<td>");
+            out.println("<ul>");
+            out.println("<li  style=\"list-style:none;\">");
+            out.println("<input type=\"radio\" name=\"custom_type\" value=\"public\" />");
+            out.println("Jens");
+            out.println("<input type=\"radio\" name=\"custom_type\""); 
+            out.println("value=\"private\" id=\"custom_venuetype_private\" />");
+            out.println("Fabian");
+            out.println("</li>");
+            out.println("</ul>");
+            out.println("</td>");
+            
+            out.println("<td>");
+            out.println("<input type=\"submit\" value=\"Submit\">");
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("</table>");
+            
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("<tr align=\"left\">");
+            out.println("<td>");
+            out.println("<img src=\"" + defaultImage + "\" alt=\"Leon Georget\" width=\"10%\" height=\"10%\">");
+            out.println("</td>");
+            
+            
+            
             out.println("</tr>");
             
             out.println("</table>");
