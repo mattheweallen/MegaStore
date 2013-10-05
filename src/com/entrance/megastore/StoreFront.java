@@ -22,6 +22,26 @@ import javax.servlet.http.HttpSession;
 @WebServlet(description = "This is a Store Front Servlet", urlPatterns = { "/entrance" })
 public class StoreFront extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
+	
+	//private final static String defaultImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
+	//private final static String cyclocrossImage = "http://upload.wikimedia.org/wikipedia/en/thumb/7/72/Cyclocross_runup.JPG/700px-Cyclocross_runup.JPG";   
+	//private final static String mountainImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/XC_MTB_2_Stevage.jpg/800px-XC_MTB_2_Stevage.jpg";
+	//private final static String trackImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Manchester_Velodrome_2011.jpg/800px-Manchester_Velodrome_2011.jpg";
+	//private final static String roadImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/TourDeFrance_2005-07-08.JPG/800px-TourDeFrance_2005-07-08.JPG";
+	//private final static String bmxImage = "http://upload.wikimedia.org/wikipedia/commons/f/fe/BMX_racing_action_photo.jpg";
+	
+	private static final Map<String, String> imageMap;
+    static {
+        Map<String, String> aMap = new HashMap<String, String>();
+        aMap.put("cx", "http://upload.wikimedia.org/wikipedia/en/thumb/7/72/Cyclocross_runup.JPG/700px-Cyclocross_runup.JPG");
+        aMap.put("mtb", "http://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/XC_MTB_2_Stevage.jpg/800px-XC_MTB_2_Stevage.jpg");
+        aMap.put("bmx", "http://upload.wikimedia.org/wikipedia/commons/f/fe/BMX_racing_action_photo.jpg");
+        aMap.put("road", "http://upload.wikimedia.org/wikipedia/commons/thumb/4/41/TourDeFrance_2005-07-08.JPG/800px-TourDeFrance_2005-07-08.JPG");
+        aMap.put("track", "http://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Manchester_Velodrome_2011.jpg/800px-Manchester_Velodrome_2011.jpg");
+        imageMap = Collections.unmodifiableMap(aMap);
+    }
+	
 	private static final Map<String, String> cyclingMap;
     static {
         Map<String, String> aMap = new HashMap<String, String>();
@@ -33,27 +53,27 @@ public class StoreFront extends HttpServlet {
         cyclingMap = Collections.unmodifiableMap(aMap);
     }
     
-    final static String background1 = "radB1";
-    final static String background2 = "radB2";
+    private String background1;
+	private String background2;
 	
-	final static String defaultImage = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
-	final static String cyclocrossImage = "http://upload.wikimedia.org/wikipedia/en/thumb/7/72/Cyclocross_runup.JPG/700px-Cyclocross_runup.JPG";   
-    /**
+	private Map<String, String> favoriteMap;
+    
+	
+	/**
      * @see HttpServlet#HttpServlet()
      */
     public StoreFront() {
-        super();
-        // TODO Auto-generated constructor stub
+        favoriteMap = new HashMap<String, String>();
+        favoriteMap.put("currentFavorite", "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg");
+        favoriteMap.put("olderFavorite", null);
+        favoriteMap.put("oldestFavorite", null);
     }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
-		
-		
 		HttpSession session = request.getSession(true);
 		boolean isSessionNew = session.isNew();
 		String sessionId = session.getId();
@@ -61,8 +81,21 @@ public class StoreFront extends HttpServlet {
 		Cookie c1 = new Cookie("favorite", "cx");
 		response.addCookie(c1);
 		
-		for(int i = 0; i < request.getCookies().length; i++) {
-			System.out.println("Cookie" + i + request.getCookies()[i] + " " + request.getCookies()[i].getName() + " " + request.getCookies()[i].getValue());
+		String current = request.getParameter("race_type_select");
+		
+		if(isSessionNew || "radB1".equals(request.getParameter("theme"))) {
+			background1 = "radB1";
+	    	background2 = "radB2";
+		} else {
+			background1 = "gnarlyB1";
+	    	background2 = "gnarlyB2";
+		}
+		
+		if(!isSessionNew) {
+			for(int i = 0; i < request.getCookies().length; i++) {
+				//System.out.println("Cookie" + i + request.getCookies()[i] + " " + request.getCookies()[i].getName() + " " + request.getCookies()[i].getValue());
+				
+			}
 		}
 		
 		
@@ -98,7 +131,7 @@ public class StoreFront extends HttpServlet {
             out.println("</select></td></tr></table>");
             out.println("</td>");
             out.println("<td style=\"width:10%\">");
-            out.println("<input type=\"submit\" value=\"Submit\">");
+            out.println("<input type=\"submit\" value=\"Submit\" name=\"favoriteSubmit\">");
             out.println("</td>");
             out.println("</tr>");
             out.println("</table>");
@@ -140,9 +173,16 @@ public class StoreFront extends HttpServlet {
             out.println("<td>");
             out.println("<ul>");
             out.println("<li  style=\"list-style:none;\">");
-            out.println("<input type=\"radio\" name=\"theme\" value=\"radB1\" />");
-            out.println("Jens");
-            out.println("<input type=\"radio\" name=\"theme\""); 
+            
+            if(isSessionNew || "radB1".equals(request.getParameter("theme"))) {
+            	out.println("<input type=\"radio\" name=\"theme\" value=\"radB1\" checked=\"" + "checked" + "\"  />");
+            	out.println("Jens");
+            	out.println("<input type=\"radio\" name=\"theme\""); 
+            } else {
+            	out.println("<input type=\"radio\" name=\"theme\" value=\"radB1\"   />");
+            	out.println("Jens");
+            	out.println("<input type=\"radio\" name=\"theme\" checked=\"checked\""); 
+            }
             out.println("value=\"radB2\"/>");
             out.println("Fabian");
             out.println("</li>");
@@ -150,7 +190,7 @@ public class StoreFront extends HttpServlet {
             out.println("</td>");
             
             out.println("<td>");
-            out.println("<input type=\"submit\" value=\"update\">");
+            out.println("<input type=\"submit\" value=\"update\" name=\"themeSubmit\">");
             out.println("</td>");
             out.println("</tr>");
             out.println("</table>");
@@ -159,15 +199,28 @@ public class StoreFront extends HttpServlet {
             out.println("</tr>");
             out.println("<tr align=\"left\">");
             
-            if(isSessionNew) {
-	            out.println("<td>");
-	            out.println("<img src=\"" + defaultImage + "\" alt=\"Leon Georget\" width=\"10%\" height=\"10%\">");
-	            out.println("</td>");
-            } else {
-            	out.println("<td>");
-	            out.println("<img src=\"" + cyclocrossImage + "\" alt=\"Cyclocross Run Up\" width=\"10%\" height=\"10%\">");
-	            out.println("</td>");
-            }
+           // if(isSessionNew) {
+	           // out.println("<td>");
+	           // out.println("<img src=\"" + defaultImage + "\" alt=\"Leon Georget\" width=\"10%\" height=\"10%\">");
+	          //  out.println("</td>");
+            //} else {
+            out.println("<td>");
+	        out.println("<img src=\"" + favoriteMap.get("currentFavorite") + "\" width=\"10%\" height=\"10%\">");
+	        out.println("</td>");
+	        if(favoriteMap.get("olderFavorite") != null) {
+	        	out.println("<td>");
+		        out.println("<img src=\"" + favoriteMap.get("olderFavorite") + "\" width=\"10%\" height=\"10%\">");
+		        out.println("</td>");
+	        }
+	        if(favoriteMap.get("oldestFavorite") != null) {
+	        	out.println("<td>");
+		        out.println("<img src=\"" + favoriteMap.get("oldestFavorite") + "\" width=\"10%\" height=\"10%\">");
+		        out.println("</td>");
+	        }
+	        
+	        
+	            
+            //}
             
             
             
