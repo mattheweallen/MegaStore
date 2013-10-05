@@ -83,7 +83,7 @@ public class StoreFront extends HttpServlet {
             out.println("<h1>Matt's World of Cycling</h1>");
             out.println("</td>");
             out.println("<td style=\"width:20%\">");
-            out.println("<table width=\"100%\"><tr><td>My Favorite Racing is</td></tr><tr><td><select>");
+            out.println("<table width=\"100%\"><tr><td>My Favorite Racing is</td></tr><tr><td><select name=\"race_type_select\">");
             
             for(String s : cyclingMap.keySet()) {
             	out.println("<option value=\"" + s + "\">" + cyclingMap.get(s) + "</option>");
@@ -178,7 +178,7 @@ public class StoreFront extends HttpServlet {
 		} finally {
 			out.close();
 		}
-	    
+		System.out.println("Matthew I am in the get" + request.getParameter("race_type_select"));
 	}
 
 	/**
@@ -186,6 +186,7 @@ public class StoreFront extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		System.out.println("Matthew I am in the post");
 	}
 
 }
