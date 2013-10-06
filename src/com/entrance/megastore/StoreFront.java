@@ -16,6 +16,9 @@ import javax.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class StoreFront
+ * 
+ * @author matthew
+ * 
  */
 @WebServlet(description = "This is a Store Front Servlet", urlPatterns = { "/entrance" })
 public class StoreFront extends HttpServlet {
@@ -83,13 +86,16 @@ public class StoreFront extends HttpServlet {
 					.getParameter("race_type_select"));
 			response.addCookie(new Cookie("firstFavorite", firstFavorite));
 		}
+		String secondFavorite = null;
+		String thirdFavorite = null;
+		if (!session.isNew()) {
+			Map<String, String> cookiesMap = readCookies(request);
+			secondFavorite = cookiesMap.get("firstFavorite");
+			response.addCookie(new Cookie("secondFavorite", secondFavorite));
 
-		Map<String, String> cookiesMap = readCookies(request);
-		String secondFavorite = cookiesMap.get("firstFavorite");
-		response.addCookie(new Cookie("secondFavorite", secondFavorite));
-
-		String thirdFavorite = cookiesMap.get("secondFavorite");
-		response.addCookie(new Cookie("thirdFavorite", thirdFavorite));
+			thirdFavorite = cookiesMap.get("secondFavorite");
+			response.addCookie(new Cookie("thirdFavorite", thirdFavorite));
+		}
 
 		try {
 			out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">");
@@ -182,7 +188,7 @@ public class StoreFront extends HttpServlet {
 				out.println("Jens");
 				out.println("<input type=\"radio\" name=\"theme\" value=\"gnarly\" checked=\"checked\"");
 			}
-			out.println("value=\"radB2\"/>");
+			out.println("/>");
 			out.println("Fabian");
 			out.println("</li>");
 			out.println("</ul>");
@@ -203,17 +209,20 @@ public class StoreFront extends HttpServlet {
 			out.println("<tr>");
 
 			out.println("<td>");
-			out.println("<img src=\"" + firstFavorite
-					+ "\" width=\"30px\" height=\"30px\">");
-		
-			if (secondFavorite != null) {
-				out.println("<img src=\"" + secondFavorite
-						+ "\" width=\"30px\" height=\"30px\">");
-			}
-			if (thirdFavorite != null) {
+
+			if (thirdFavorite != null && !"".equals(thirdFavorite.trim())) {
 				out.println("<img src=\"" + thirdFavorite
-						+ "\" width=\"30px\" height=\"30px\">");
+						+ "\" width=\"50px\" height=\"50px\" alt=\"Cycling\">");
 			}
+
+			if (secondFavorite != null && !"".equals(secondFavorite.trim())) {
+				out.println("<img src=\"" + secondFavorite
+						+ "\" width=\"50px\" height=\"50px\" alt=\"Cycling\">");
+			}
+
+			out.println("<img src=\"" + firstFavorite
+					+ "\" width=\"50px\" height=\"50px\" alt=\"Cycling\">");
+
 			out.println("</td>");
 
 			out.println("</tr>");
@@ -242,6 +251,9 @@ public class StoreFront extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 	}
 
+	/**
+	 * @param request
+	 */
 	private void updateTheme(HttpServletRequest request) {
 		if (!"gnarly".equals(request.getParameter("theme"))) {
 			background1 = "radB1";
@@ -252,13 +264,16 @@ public class StoreFront extends HttpServlet {
 		}
 	}
 
+	/**
+	 * @param request
+	 * @return
+	 */
 	private Map<String, String> readCookies(HttpServletRequest request) {
 		Map<String, String> cookies = new HashMap<String, String>();
 		Cookie[] c = request.getCookies();
 		if (c != null) {
 			for (int i = 0; i < c.length; i++) {
 				cookies.put(c[i].getName(), c[i].getValue());
-				System.out.println(c[i].getName() + " " + c[i].getValue());
 			}
 		}
 		return cookies;
