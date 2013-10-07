@@ -15,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet implementation class StoreFront
+ * Servlet implementation class StoreFront. This Servlet will track users 
+ * favorite cycling race. It will also keep track of user selected theme.
  * 
- * @author matthew
+ * @author Matthew Allen
+ * @version October 7, 2013
  * 
  */
 @WebServlet(description = "This is a Store Front Servlet", urlPatterns = { "/entrance" })
@@ -58,8 +60,9 @@ public class StoreFront extends HttpServlet {
 
 	private String background1;
 	private String background2;
-	private String sessionId;
-	private HttpSession session;
+	private String firstFavorite;
+	private String secondFavorite;
+	private String thirdFavorite;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -68,33 +71,30 @@ public class StoreFront extends HttpServlet {
 	}
 
 	/**
+	 * This method does the work of creating http response based on http request.
+	 * 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 
+		String sessionId;
+		HttpSession session;
+
 		PrintWriter out = response.getWriter();
 		session = request.getSession(true);
 		sessionId = session.getId();
 
-		updateTheme(request);
-
-		String firstFavorite = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
-		if (request.getParameter("race_type_select") != null) {
-			firstFavorite = imageMap.get(request
-					.getParameter("race_type_select"));
-			response.addCookie(new Cookie("firstFavorite", firstFavorite));
+		if (session.isNew()) {
+			initializePage();
 		}
-		String secondFavorite = null;
-		String thirdFavorite = null;
-		if (!session.isNew()) {
-			Map<String, String> cookiesMap = readCookies(request);
-			secondFavorite = cookiesMap.get("firstFavorite");
-			response.addCookie(new Cookie("secondFavorite", secondFavorite));
 
-			thirdFavorite = cookiesMap.get("secondFavorite");
-			response.addCookie(new Cookie("thirdFavorite", thirdFavorite));
+		String action = request.getParameter("action");
+		if ("Update".equals(action)) {
+			updateTheme(request, response);
+		} else if ("Submit".equals(action)) {
+			updateFavorite(request, response);
 		}
 
 		try {
@@ -123,8 +123,9 @@ public class StoreFront extends HttpServlet {
 			out.println("<table width=\"100%\"><tr><td>My Favorite Racing is</td></tr><tr><td><select name=\"race_type_select\">");
 
 			for (String s : cyclingMap.keySet()) {
-				if (request.getParameter("race_type_select") != null
-						&& request.getParameter("race_type_select").equals(s)) {
+				if (s.equals(request.getParameter("race_type_select"))
+						|| s.equals(readCookies(request)
+								.get("race_type_select"))) {
 					out.println("<option selected value=\"" + s + "\">"
 							+ cyclingMap.get(s) + "</option>");
 				} else {
@@ -135,7 +136,7 @@ public class StoreFront extends HttpServlet {
 			out.println("</select></td></tr></table>");
 			out.println("</td>");
 			out.println("<td style=\"width:10%\">");
-			out.println("<input type=\"submit\" value=\"Submit\" name=\"favoriteSubmit\">");
+			out.println("<input type=\"submit\" value=\"Submit\" name=\"action\">");
 			out.println("</td>");
 			out.println("</tr>");
 			out.println("</table>");
@@ -178,24 +179,27 @@ public class StoreFront extends HttpServlet {
 			out.println("<ul>");
 			out.println("<li  style=\"list-style:none;\">");
 
-			if (!"gnarly".equals(request.getParameter("theme"))) {
+			if (!"gnarly".equals(request.getParameter("theme"))
+					&& request.getParameter("theme") != null
+					|| (request.getParameter("theme") == null && !"gnarly"
+							.equals(readCookies(request).get("theme")))) {
 				out.println("<input type=\"radio\" name=\"theme\" value=\"rad\" checked=\""
 						+ "checked" + "\"  />");
-				out.println("Jens");
+				out.println("Rad");
 				out.println("<input type=\"radio\" value=\"gnarly\" name=\"theme\"");
 			} else {
 				out.println("<input type=\"radio\" name=\"theme\" value=\"rad\"/>");
-				out.println("Jens");
+				out.println("Rad");
 				out.println("<input type=\"radio\" name=\"theme\" value=\"gnarly\" checked=\"checked\"");
 			}
 			out.println("/>");
-			out.println("Fabian");
+			out.println("Gnarly");
 			out.println("</li>");
 			out.println("</ul>");
 			out.println("</td>");
 
 			out.println("<td>");
-			out.println("<input type=\"submit\" value=\"update\" name=\"themeSubmit\">");
+			out.println("<input type=\"submit\" value=\"Update\" name=\"action\">");
 			out.println("</td>");
 			out.println("</tr>");
 			out.println("</table>");
@@ -244,6 +248,18 @@ public class StoreFront extends HttpServlet {
 	}
 
 	/**
+	 * This method sets the page as it should initially be displayed.
+	 * The initial display of the page has a default picture and theme.
+	 */
+	public void initializePage() {
+		background1 = "radB1";
+		background2 = "radB2";
+		firstFavorite = "http://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Leon_Georget_1909.jpg/785px-Leon_Georget_1909.jpg";
+		secondFavorite = null;
+		thirdFavorite = null;
+	}
+
+	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
@@ -252,9 +268,34 @@ public class StoreFront extends HttpServlet {
 	}
 
 	/**
+	 * This method handles when the user selects and submits a new favorite cycling race.
+	 * 
 	 * @param request
 	 */
-	private void updateTheme(HttpServletRequest request) {
+	private void updateFavorite(HttpServletRequest request,
+			HttpServletResponse response) {
+		if (request.getParameter("race_type_select") != null) {
+			firstFavorite = imageMap.get(request
+					.getParameter("race_type_select"));
+			response.addCookie(new Cookie("firstFavorite", firstFavorite));
+			response.addCookie(new Cookie("race_type_select", request
+					.getParameter("race_type_select")));
+		}
+		Map<String, String> cookiesMap = readCookies(request);
+		secondFavorite = cookiesMap.get("firstFavorite");
+		response.addCookie(new Cookie("secondFavorite", secondFavorite));
+
+		thirdFavorite = cookiesMap.get("secondFavorite");
+		response.addCookie(new Cookie("thirdFavorite", thirdFavorite));
+	}
+
+	/**
+	 * This method handles when the user selects and submits a new theme.
+	 * 
+	 * @param request
+	 */
+	private void updateTheme(HttpServletRequest request,
+			HttpServletResponse response) {
 		if (!"gnarly".equals(request.getParameter("theme"))) {
 			background1 = "radB1";
 			background2 = "radB2";
@@ -262,9 +303,12 @@ public class StoreFront extends HttpServlet {
 			background1 = "gnarlyB1";
 			background2 = "gnarlyB2";
 		}
+		response.addCookie(new Cookie("theme", request.getParameter("theme")));
 	}
 
 	/**
+	 * This is a utility method to put the cookies from the request into a Map.
+	 * 
 	 * @param request
 	 * @return
 	 */
